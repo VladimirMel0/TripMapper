@@ -12,24 +12,25 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import reactor.core.publisher.Mono;
 
 @Service
-public class ServicesTripMapper {
+public class ServicesTripMapper implements TripMapperService {
     private WebClient webClient;
 
     public ServicesTripMapper(WebClient.Builder builder,
     @Value("${openai.api.key}") String apiKey){
         this.webClient = builder
         .baseUrl("https://api.openai.com/v1/completions")
-        .defaultHeader("Authorization:", String.format("Bearer %s", apiKey))
+        .defaultHeader("Authorization", String.format("Bearer %s", apiKey))
         .defaultHeader("Content-Type", "application/json")
         .build();
     }
-
-    public Mono<ChatGPTResponse> createTripMapper(String destiny){
+    @Override
+    public Mono<String> createTripMapper(String destiny){
         ChatGPTRequest request = createTripRequest(destiny);{
 
             return webClient.post().bodyValue(request)
             .retrieve()
-            .bodyToMono(ChatGPTResponse.class);
+            .bodyToMono(ChatGPTResponse.class)
+            .map(response -> response.choices().get(0).text());
         }
     };
 

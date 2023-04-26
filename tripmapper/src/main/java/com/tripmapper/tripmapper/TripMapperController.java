@@ -14,6 +14,6 @@ public class TripMapperController {
 
     @PostMapping("/trip-mapper")
     public Mono<String> createTripMapper(@RequestBody String destiny){
-        return service.createTripMapper(destiny).map(response -> response.choices().get(0).text());
+        return service.createTripMapper(destiny);
     }
 }
