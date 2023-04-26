@@ -13,21 +13,21 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class ServicesTripMapper {
-    private WebClient webclient;
+    private WebClient webClient;
 
     public ServicesTripMapper(WebClient.Builder builder,
-    @Value("${open.api.key}") String apiKey){
-        this.webclient = builder
+    @Value("${openai.api.key}") String apiKey){
+        this.webClient = builder
         .baseUrl("https://api.openai.com/v1/completions")
-        .defaultHeader("Content-Type", "application/json")
         .defaultHeader("Authorization:", String.format("Bearer %s", apiKey))
+        .defaultHeader("Content-Type", "application/json")
         .build();
     }
 
     public Mono<ChatGPTResponse> createTripMapper(String destiny){
         ChatGPTRequest request = createTripRequest(destiny);{
 
-            return webclient.post().bodyValue(request)
+            return webClient.post().bodyValue(request)
             .retrieve()
             .bodyToMono(ChatGPTResponse.class);
         }
